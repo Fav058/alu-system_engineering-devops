@@ -1,15 +1,12 @@
-
 #!/usr/bin/env bash
 # Install Nginx and configure a permanent redirect
 
 apt-get update -y
 apt-get install -y nginx
 
-cat > /var/www/html/index.html <<'EOF'
-Holberton School for the win!
-EOF
+echo "Holberton School for the win!" > /var/www/html/index.html
 
-cat > /etc/nginx/sites-available/default <<'EOF'
+cat > /etc/nginx/sites-available/default <<'NGINX'
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -27,7 +24,6 @@ server {
         try_files $uri $uri/ =404;
     }
 }
-EOF
+NGINX
 
 nginx -t && service nginx restart
-
