@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
+# Installs nginx and serves a page containing Holberton School on port 80
 
-apt-get update
-apt-get install -y nginx
+export DEBIAN_FRONTEND=noninteractive
 
-echo "Holberton School for the win!" > /var/www/html/index.html
+run() {
+    if [ "$(id -u)" -eq 0 ]; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
 
-service nginx restart
+run apt-get update -y
+run apt-get install -y nginx
+echo "Holberton School for the win!" | run tee /var/www/html/index.html > /dev/null
+run service nginx restart
