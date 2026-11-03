@@ -7,7 +7,7 @@ echo "Holberton School for the win!" | sudo tee /var/www/html/index.html > /dev/
 
 if ! grep -rq "X-Served-By" /etc/nginx/
 then
-    sudo sed -i '/^http {/a \\tadd_header X-Served-By $hostname;' /etc/nginx/nginx.conf
+    sudo sed -i "/^http {/a add_header X-Served-By \$hostname;" /etc/nginx/nginx.conf
 fi
 
 sudo nginx -t
