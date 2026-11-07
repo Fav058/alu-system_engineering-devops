@@ -1,25 +1,15 @@
 #!/usr/bin/env bash
 # Installs ufw and blocks all incoming traffic except TCP ports 22, 80 and 443
 
-export DEBIAN_FRONTEND=noninteractive
+sudo apt-get update -y
+sudo apt-get install -y ufw
 
-run() {
-    if [ "$(id -u)" -eq 0 ]; then
-        "$@"
-    else
-        sudo "$@"
-    fi
-}
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
 
-run apt-get update -y
-run apt-get install -y ufw
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
 
-run ufw default deny incoming
-run ufw default allow outgoing
-
-run ufw allow 22/tcp
-run ufw allow 80/tcp
-run ufw allow 443/tcp
-
-run ufw --force enable
-run ufw status verbose
+sudo ufw --force enable
+sudo ufw status verbose
