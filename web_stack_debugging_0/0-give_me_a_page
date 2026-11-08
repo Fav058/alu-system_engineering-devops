@@ -1,0 +1,4 @@
+tarts Apache and makes the root page return Hello Holberton
+
+service apache2 start
+echo "Hello Holberton" > /var/www/html/index.html
