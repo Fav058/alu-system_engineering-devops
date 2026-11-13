@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Configure Nginx to run as nginx and listen on port 8080.
+
+set -euo pipefail
+
+if [[ $(id -u) -ne 0 ]]; then
+    echo "Run this script as root." >&2
+    exit 1
+fi
+
+if ! command -v nginx >/dev/null 2>&1 || ! id nginx >/dev/null 2>&1; then
+    echo "Nginx or the nginx user is missing; use the Task 1 container." >&2
+    exit 1
+fi
+
+nginx_conf=/etc/nginx/nginx.conf
+site=/etc/nginx/sites-available/default
+
+if [[ ! -f "$site" ]]; then
+    site=/etc/nginx/sites-enabled/default
+fi
+if [[ ! -f "$nginx_conf" || ! -f "$site" ]]; then
+    echo "Expected Nginx configuration files were not found." >&2
+    exit 1
+fi
+
+# Resolve a sites-enabled symlink before editing it.
+site=$(readlink -f "$site")
+
+service nginx stop >/dev/null 2>&1 || true
+pkill -x nginx >/dev/null 2>&1 || true
+
+# Run the master as nginx and put its PID somewhere nginx can write.
+sed -i -E \
+    -e '/^[[:space:]]*user[[:space:]]/d' \
+    -e '/^[[:space:]]*pid[[:space:]]/d' \
+    "$nginx_conf"
+sed -i '1i pid /tmp/nginx.pid;' "$nginx_conf"
+sed -i '1i user nginx;' "$nginx_conf"
+chmod 644 "$nginx_conf"
+
+# Update IPv4 and IPv6 port 80 listeners to port 8080.
+sed -i -E \
+    -e 's/(listen[[:space:]]+)\[::\]:80([[:space:];])/\1[::]:8080\2/g' \
+    -e 's/(listen[[:space:]]+)80([[:space:];])/\18080\2/g' \
+    "$site"
+
+mkdir -p /var/log/nginx /var/cache/nginx
+for dir in /var/log/nginx /var/cache/nginx /var/lib/nginx; do
+    if [[ -d "$dir" ]]; then
+        chown -R nginx:nginx "$dir"
+    fi
+done
+
+su -s /bin/sh nginx -c 'nginx -t'
+su -s /bin/sh nginx -c 'nginx'
