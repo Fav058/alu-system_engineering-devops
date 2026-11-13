@@ -1,9 +1,5 @@
-# NAT table for port forwarding
-*nat
-:PREROUTING ACCEPT [0:0]
--A PREROUTING -p tcp --dport 8080 -j REDIRECT --to-port 80
-COMMIT
-
+cd /alu-system_engineering-devops
+cat > firewall/100-port_forwarding <<'EOF'
 #
 # rules.before
 #
@@ -15,6 +11,11 @@ COMMIT
 #
 
 # Don't delete these required lines, otherwise there will be errors
+*nat
+:PREROUTING ACCEPT [0:0]
+-A PREROUTING -p tcp --dport 8080 -j REDIRECT --to-port 80
+COMMIT
+
 *filter
 :ufw-before-input - [0:0]
 :ufw-before-output - [0:0]
@@ -79,3 +80,4 @@ COMMIT
 
 # don't delete the 'COMMIT' line or these rules won't be processed
 COMMIT
+EOF
