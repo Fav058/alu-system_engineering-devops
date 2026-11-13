@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Run whoami as the user passed as the argument.
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: $0 USER" >&2
+    exit 1
+fi
+
+exec sudo -u "$1" whoami
