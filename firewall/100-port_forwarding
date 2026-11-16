@@ -1,5 +1,3 @@
-cd /alu-system_engineering-devops
-cat > firewall/100-port_forwarding <<'EOF'
 #
 # rules.before
 #
@@ -80,4 +78,3 @@ COMMIT
 
 # don't delete the 'COMMIT' line or these rules won't be processed
 COMMIT
-EOF
