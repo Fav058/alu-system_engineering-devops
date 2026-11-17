@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Configure Nginx for port 80 and leave it outside init tracking.
+sed -i 's/8080/80/g' /etc/nginx/sites-enabled/default
+nginx
+rm -f /run/nginx.pid
