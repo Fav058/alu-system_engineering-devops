@@ -1,6 +1,8 @@
-# Raise the holberton user's open-file limits so login commands can open files.
-exec { 'raise-holberton-nofile-limit':
-  command => '/bin/sed -i -e "s/^holberton hard nofile 5$/holberton hard nofile 65536/" -e "s/^holberton soft nofile 4$/holberton soft nofile 65536/" /etc/security/limits.conf',
-  unless  => '/bin/grep -q "^holberton hard nofile 65536$" /etc/security/limits.conf && /bin/grep -q "^holberton soft nofile 65536$" /etc/security/limits.conf',
-  path    => ['/bin', '/usr/bin'],
+# Set a high open-file limit for the holberton user at login.
+file { '/etc/security/limits.d/99-holberton-nofile.conf':
+  ensure  => file,
+  owner   => 'root',
+  group   => 'root',
+  mode    => '0644',
+  content => "# Raise holberton's per-user open-file limit.\nholberton soft nofile 65536\nholberton hard nofile 65536\n",
 }
